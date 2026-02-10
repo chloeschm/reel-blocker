@@ -22,7 +22,7 @@ class Session {
       'choice': choice.index,
       'unlockExpires': unlockExpires?.toIso8601String(),
     };
-  }
+  } 
 
   factory Session.fromMap(Map<String, dynamic> map) {
     return Session(

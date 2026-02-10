@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:reel_blocker/daily_stats.dart';
+import 'package:reel_blocker/daily_stats_storage.dart';
 import 'session.dart';
 import 'session_storage.dart';
+import 'hesitation_screen.dart';
 
 void main() {
   runApp(ReelBlockerApp());
@@ -23,6 +26,7 @@ class InterventionScreen extends StatefulWidget {
 
 class _InterventionScreenState extends State<InterventionScreen> {
   Session? session;
+  DailyStats? dailyStats;
   bool loading = true;
 
   @override
@@ -33,6 +37,7 @@ class _InterventionScreenState extends State<InterventionScreen> {
 
   Future<void> _resolveSession() async {
     session = await SessionStorage.load();
+    dailyStats = await DailyStatsStorage.load();
 
     if (session == null) {
       session = Session(startTime: DateTime.now());
@@ -51,7 +56,15 @@ class _InterventionScreenState extends State<InterventionScreen> {
 
     await SessionStorage.save(session!);
 
-    Navigator.push(context, MaterialPageRoute(builder: (context) => HesitationScreen()));
+    dailyStats!.scrollCount++;
+    await DailyStatsStorage.save(dailyStats!);
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => HesitationScreen(dailyStats: dailyStats!),
+      ),
+    );
   }
 
   Future<void> _chooseDM() async {
@@ -61,7 +74,11 @@ class _InterventionScreenState extends State<InterventionScreen> {
 
     await SessionStorage.save(session!);
 
+    dailyStats!.dmCount++;
+    await DailyStatsStorage.save(dailyStats!);
+
     print("Go to unlock screen");
+    print("DM count today: ${dailyStats!.dmCount}");
   }
 
   // UI
