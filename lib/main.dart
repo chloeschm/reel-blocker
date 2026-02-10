@@ -4,6 +4,7 @@ import 'package:reel_blocker/daily_stats_storage.dart';
 import 'session.dart';
 import 'session_storage.dart';
 import 'hesitation_screen.dart';
+import 'unlocked_screen.dart';
 
 void main() {
   runApp(ReelBlockerApp());
@@ -77,8 +78,12 @@ class _InterventionScreenState extends State<InterventionScreen> {
     dailyStats!.dmCount++;
     await DailyStatsStorage.save(dailyStats!);
 
-    print("Go to unlock screen");
-    print("DM count today: ${dailyStats!.dmCount}");
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => UnlockedScreen(),
+      ),
+    );
   }
 
   // UI
