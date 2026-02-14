@@ -5,10 +5,10 @@ import 'package:timezone/timezone.dart' as tz;
 class NotificationService {
   static final FlutterLocalNotificationsPlugin _notifications =
       FlutterLocalNotificationsPlugin();
-
+  static bool shouldShowReflection = false;
   static Future<void> initialize() async {
     tz.initializeTimeZones();
-    
+
     const AndroidInitializationSettings androidSettings =
         AndroidInitializationSettings('@mipmap/ic_launcher');
 
@@ -23,7 +23,9 @@ class NotificationService {
     await _notifications.initialize(
       settings,
       onDidReceiveNotificationResponse: (details) {
-        print('Notification tapped!');
+        if (details.payload == 'reflection') {
+          shouldShowReflection = true;
+        }
       },
     );
   }
@@ -31,15 +33,15 @@ class NotificationService {
   static Future<void> scheduleReflection() async {
     const AndroidNotificationDetails androidDetails =
         AndroidNotificationDetails(
-      'reflection_channel',
-      'Reflection Notifications',
-      channelDescription: 'asks if scrolling was worth it',
-      importance: Importance.high,
-      priority: Priority.high,
-    );
-    
+          'reflection_channel',
+          'Reflection Notifications',
+          channelDescription: 'asks if scrolling was worth it',
+          importance: Importance.high,
+          priority: Priority.high,
+        );
+
     const DarwinNotificationDetails iosDetails = DarwinNotificationDetails();
-    
+
     const NotificationDetails details = NotificationDetails(
       android: androidDetails,
       iOS: iosDetails,
@@ -49,11 +51,12 @@ class NotificationService {
       0,
       'hey jack...',
       'was the scrolling worth it? 👀',
-      tz.TZDateTime.now(tz.local).add(const Duration(minutes: 10)),  
+      tz.TZDateTime.now(tz.local).add(const Duration(minutes: 10)),
       details,
       androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
+      payload: 'reflection',
     );
   }
 }

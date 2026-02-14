@@ -6,6 +6,7 @@ import 'session_storage.dart';
 import 'hesitation_screen.dart';
 import 'unlocked_screen.dart';
 import 'notification_service.dart';
+import 'reflection_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -94,6 +95,18 @@ class _InterventionScreenState extends State<InterventionScreen> {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
+      if (NotificationService.shouldShowReflection && dailyStats != null) {
+    NotificationService.shouldShowReflection = false; 
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ReflectionScreen(dailyStats: dailyStats!),
+        ),
+      );
+    });
+  }
+
     return _buildQuestionScreen();
   }
 
@@ -117,7 +130,7 @@ class _InterventionScreenState extends State<InterventionScreen> {
             const SizedBox(height: 10),
             ElevatedButton(
               onPressed: _chooseDM,
-              child: const Text('checking our DMs'),
+              child: const Text('checking our dms'),
             ),
           ],
         ),
