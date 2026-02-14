@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'daily_stats.dart';
 import 'unlocked_screen.dart';
+import 'notification_service.dart';
 
 class HesitationScreen extends StatefulWidget {
   final DailyStats dailyStats;
@@ -21,12 +22,12 @@ class _HesitationScreenState extends State<HesitationScreen> {
     _startCountdown();
   }
 
-  void _confirmScroll() {
+  void _confirmScroll() async {
+    await NotificationService.scheduleReflection();    
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => UnlockedScreen(),
-      ),
-      );
+      MaterialPageRoute(builder: (context) => UnlockedScreen()),
+    );
     print("confirmed scroll :(");
   }
 
@@ -59,6 +60,7 @@ class _HesitationScreenState extends State<HesitationScreen> {
               Text(
                 "you've already scrolled ${widget.dailyStats.scrollCount} times today...",
                 style: TextStyle(color: Colors.white, fontSize: 18),
+                textAlign: TextAlign.center,
               ),
             SizedBox(height: 40),
             Text(
@@ -66,6 +68,7 @@ class _HesitationScreenState extends State<HesitationScreen> {
                   ? 'really think for $secondsRemaining seconds...'
                   : 'okay...go ahead i guess',
               style: TextStyle(color: Colors.white, fontSize: 20),
+              textAlign: TextAlign.center,
             ),
             SizedBox(height: 40),
             ElevatedButton(

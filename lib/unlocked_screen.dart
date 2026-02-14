@@ -13,8 +13,9 @@ class UnlockedScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'i\'ve unlocked instagram for you ! :p',
+              'ive unlocked instagram for you ! :p',
               style: TextStyle(color: Colors.white, fontSize: 32),
+              textAlign: TextAlign.center,
             ),
             SizedBox(height: 40),
             ElevatedButton(

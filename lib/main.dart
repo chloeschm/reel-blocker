@@ -5,8 +5,11 @@ import 'session.dart';
 import 'session_storage.dart';
 import 'hesitation_screen.dart';
 import 'unlocked_screen.dart';
+import 'notification_service.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await NotificationService.initialize();
   runApp(ReelBlockerApp());
 }
 
@@ -80,9 +83,7 @@ class _InterventionScreenState extends State<InterventionScreen> {
 
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => UnlockedScreen(),
-      ),
+      MaterialPageRoute(builder: (context) => UnlockedScreen()),
     );
   }
 
@@ -98,7 +99,7 @@ class _InterventionScreenState extends State<InterventionScreen> {
 
   Widget _buildQuestionScreen() {
     return Scaffold(
-      backgroundColor: Colors.blue,
+      backgroundColor: const Color.fromARGB(255, 193, 155, 255),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -106,6 +107,7 @@ class _InterventionScreenState extends State<InterventionScreen> {
             const Text(
               'JACK!! why are you opening Instagram!!?',
               style: TextStyle(color: Colors.white, fontSize: 24),
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),
             ElevatedButton(
