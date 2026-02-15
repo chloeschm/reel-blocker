@@ -122,10 +122,8 @@ class _InterventionScreenState extends State<InterventionScreen> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => RecapScreen(
-              dailyStats: dailyStats!,
-              streak: updatedStreak,
-            ),
+            builder: (context) =>
+                RecapScreen(dailyStats: dailyStats!, streak: updatedStreak),
           ),
         );
       });

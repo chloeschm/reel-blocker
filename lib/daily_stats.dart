@@ -12,8 +12,8 @@ class DailyStats {
     this.dmCount = 0,
     this.worthItYes = 0,
     this.worthItNo = 0,
-    this.openHours = const [],
-  });
+    List<int>? openHours,
+  }) : openHours = openHours ?? [];
 
   Map<String, dynamic> toMap() {
     return {
@@ -34,7 +34,7 @@ class DailyStats {
       worthItYes: map['worthItYes'] as int,
       worthItNo: map['worthItNo'] as int,
       openHours: map['openHours'] != null
-          ? (map['openHours'] as List<dynamic>).map((e) => e as int).toList()
+          ? List<int>.from(map['openHours'])
           : [],
     );
   }
