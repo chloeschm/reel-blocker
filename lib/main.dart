@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:reel_blocker/daily_stats.dart';
 import 'package:reel_blocker/daily_stats_storage.dart';
+import 'package:reel_blocker/streak_storage.dart';
 import 'session.dart';
 import 'session_storage.dart';
 import 'hesitation_screen.dart';
 import 'unlocked_screen.dart';
 import 'notification_service.dart';
 import 'reflection_screen.dart';
+import 'recap_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,6 +34,7 @@ class InterventionScreen extends StatefulWidget {
 class _InterventionScreenState extends State<InterventionScreen> {
   Session? session;
   DailyStats? dailyStats;
+  int streak = 0;
   bool loading = true;
 
   @override
@@ -43,11 +46,16 @@ class _InterventionScreenState extends State<InterventionScreen> {
   Future<void> _resolveSession() async {
     session = await SessionStorage.load();
     dailyStats = await DailyStatsStorage.load();
+    streak = await StreakStorage.load();
+    await NotificationService.scheduleDailyRecap();
 
     if (session == null) {
       session = Session(startTime: DateTime.now());
       await SessionStorage.save(session!);
     }
+
+    dailyStats!.openHours.add(DateTime.now().hour);
+    await DailyStatsStorage.save(dailyStats!);
 
     setState(() {
       loading = false;
@@ -95,17 +103,33 @@ class _InterventionScreenState extends State<InterventionScreen> {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
-      if (NotificationService.shouldShowReflection && dailyStats != null) {
-    NotificationService.shouldShowReflection = false; 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ReflectionScreen(dailyStats: dailyStats!),
-        ),
-      );
-    });
-  }
+    if (NotificationService.shouldShowReflection && dailyStats != null) {
+      NotificationService.shouldShowReflection = false;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ReflectionScreen(dailyStats: dailyStats!),
+          ),
+        );
+      });
+    }
+
+    if (NotificationService.shouldShowRecap && dailyStats != null) {
+      NotificationService.shouldShowRecap = false;
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        final updatedStreak = await StreakStorage.checkAndUpdate(dailyStats!);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => RecapScreen(
+              dailyStats: dailyStats!,
+              streak: updatedStreak,
+            ),
+          ),
+        );
+      });
+    }
 
     return _buildQuestionScreen();
   }
